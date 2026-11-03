@@ -1,0 +1,87 @@
+# Copyright (c) 2026 Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+name: Skill Validation
+
+on:
+  workflow_call:
+    inputs:
+      change-mode:
+        description: 'Use an exact immutable range or run full validation'
+        required: false
+        type: string
+        default: full
+      base-sha:
+        description: 'Immutable base commit used in range mode'
+        required: false
+        type: string
+        default: ''
+      head-sha:
+        description: 'Immutable head commit used in range mode'
+        required: false
+        type: string
+        default: ''
+      soft-fail:
+        description: 'Whether to continue on validation failures'
+        required: false
+        type: boolean
+        default: false
+      changed-files-only:
+        description: 'Only validate skills with changed files'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Skill Structure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - name: Verify resolved head commit
+        if: inputs.change-mode == 'range'
+        shell: pwsh
+        env:
+          EXPECTED_HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          $actualHeadSha = (git rev-parse HEAD).Trim()
+          if ($env:EXPECTED_HEAD_SHA -cnotmatch '^(?:[0-9a-f]{40}|[0-9a-f]{64})$' -or $actualHeadSha -cne $env:EXPECTED_HEAD_SHA) {
+            Write-Output "::error::Checked-out commit $actualHeadSha does not match the resolved head commit."
+            exit 1
+          }
+
+      - name: Run skill validation
+        shell: pwsh
+        env:
+          INPUT_BASE_SHA: ${{ inputs.base-sha }}
+          INPUT_CHANGE_MODE: ${{ inputs.change-mode }}
+          INPUT_CHANGED_FILES_ONLY: ${{ inputs.changed-files-only }}
+        run: |
+          $params = @{}
+          if ($env:INPUT_CHANGE_MODE -notin @('full', 'range')) { throw 'Unsupported change mode.' }
+          if ($env:INPUT_CHANGED_FILES_ONLY -eq 'true' -and $env:INPUT_CHANGE_MODE -eq 'range') {
+            if (-not $env:INPUT_BASE_SHA) { throw 'Range mode requires an immutable base commit ID.' }
+            $params['ChangedFilesOnly'] = $true
+            $params['BaseBranch'] = $env:INPUT_BASE_SHA
+          }
+          & './scripts/linting/Validate-SkillStructure.ps1' -WarningsAsErrors @params
+        continue-on-error: ${{ inputs.soft-fail }}
+
+      - name: Upload validation results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: skill-validation-results
+          path: logs/skill-validation-results.json
+          retention-days: 30
+          if-no-files-found: ignore

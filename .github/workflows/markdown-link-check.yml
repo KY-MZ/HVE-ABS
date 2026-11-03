@@ -1,0 +1,124 @@
+# Copyright (c) 2026 Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+name: Markdown Link Check
+
+on:
+  workflow_call:
+    inputs:
+      change-mode:
+        description: 'Use an exact immutable range or run full validation'
+        required: false
+        type: string
+        default: full
+      base-sha:
+        description: 'Immutable base commit used in range mode'
+        required: false
+        type: string
+        default: ''
+      head-sha:
+        description: 'Immutable head commit used in range mode'
+        required: false
+        type: string
+        default: ''
+      soft-fail:
+        description: 'Whether to continue on broken links'
+        required: false
+        type: boolean
+        default: false
+      changed-files-only:
+        description: 'Scope external-link validation to markdown files changed against the base branch; internal links are always validated repository-wide'
+        required: false
+        type: boolean
+        default: true
+      external-links-as-warnings:
+        description: 'Report external-link findings without failing while keeping internal-link failures blocking'
+        required: false
+        type: boolean
+        default: false
+      throttle-limit:
+        description: 'Maximum number of markdown-link-check processes run concurrently'
+        required: false
+        type: number
+        default: 8
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-link-check:
+    name: Check Markdown Links
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - name: Verify resolved head commit
+        if: inputs.change-mode == 'range'
+        shell: pwsh
+        env:
+          EXPECTED_HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          $actualHeadSha = (git rev-parse HEAD).Trim()
+          if ($env:EXPECTED_HEAD_SHA -cnotmatch '^(?:[0-9a-f]{40}|[0-9a-f]{64})$' -or $actualHeadSha -cne $env:EXPECTED_HEAD_SHA) {
+            Write-Output "::error::Checked-out commit $actualHeadSha does not match the resolved head commit."
+            exit 1
+          }
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create logs directory
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path logs | Out-Null
+
+      - name: Run markdown link check
+        id: link-check
+        shell: pwsh
+        env:
+          INPUT_BASE_SHA: ${{ inputs.base-sha }}
+          INPUT_CHANGE_MODE: ${{ inputs.change-mode }}
+          INPUT_CHANGED_FILES_ONLY: ${{ inputs.changed-files-only }}
+          EXTERNAL_LINKS_AS_WARNINGS: ${{ inputs.external-links-as-warnings }}
+          THROTTLE_LIMIT: ${{ inputs.throttle-limit }}
+        run: |
+          $params = @{ ThrottleLimit = [int]$env:THROTTLE_LIMIT }
+          if ($env:INPUT_CHANGE_MODE -notin @('full', 'range')) { throw 'Unsupported change mode.' }
+          if ($env:EXTERNAL_LINKS_AS_WARNINGS -eq 'true') {
+            $params['ExternalLinksAsWarnings'] = $true
+          }
+          if ($env:INPUT_CHANGED_FILES_ONLY -eq 'true' -and $env:INPUT_CHANGE_MODE -eq 'range') {
+            if (-not $env:INPUT_BASE_SHA) { throw 'Range mode requires an immutable base commit ID.' }
+            $params['ChangedFilesOnly'] = $true
+            $params['BaseBranch'] = $env:INPUT_BASE_SHA
+          }
+          & scripts/linting/Markdown-Link-Check.ps1 @params
+        continue-on-error: ${{ inputs.soft-fail }}
+
+      - name: Upload markdown link check results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: markdown-link-check-results
+          path: logs/markdown-link-check-results.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Check results and fail if needed
+        if: ${{ !inputs.soft-fail && steps.link-check.outcome == 'failure' }}
+        shell: pwsh
+        run: |
+          Write-Host "Markdown link check failed and soft-fail is false. Failing the job."
+          exit 1

@@ -1,0 +1,69 @@
+# Copyright (c) 2026 Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+name: AI Artifact Validation
+
+on:
+  workflow_call:
+    inputs:
+      soft-fail:
+        description: 'Whether to continue on AI artifact validation failures'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ai-artifact-validation:
+    name: Validate AI Artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PowerShell modules
+        uses: ./.github/actions/setup-ps-modules
+
+      - name: Validate AI artifact footers and disclaimers
+        id: planner-artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path logs | Out-Null
+          & scripts/linting/Validate-PlannerArtifacts.ps1 -FailOnMissing
+        continue-on-error: true
+
+      - name: Validate artifact path portability
+        id: artifact-portability
+        shell: pwsh
+        run: |
+          & scripts/linting/Test-ArtifactPathPortability.ps1
+        continue-on-error: true
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ai-artifact-results
+          path: |
+            logs/ai-artifact-results.json
+            logs/artifact-path-portability-results.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Check results
+        if: >-
+          always() &&
+          !inputs.soft-fail &&
+          (
+            steps.planner-artifacts.outcome == 'failure' ||
+            steps.artifact-portability.outcome == 'failure'
+          )
+        shell: pwsh
+        run: |
+          Write-Error "AI artifact validation found violations; check uploaded results for details."
+          exit 1
