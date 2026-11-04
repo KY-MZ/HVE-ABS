@@ -1,0 +1,32 @@
+[
+  {
+    "oid": "user1",
+    "name": "Alice Chen",
+    "email": "alice@partner.com",
+    "groups": ["group-sales-east", "group-finance"]
+  },
+  {
+    "oid": "user2",
+    "name": "Bob Johnson",
+    "email": "bob@partner.com",
+    "groups": ["group-sales-west", "group-executive"]
+  },
+  {
+    "oid": "user3",
+    "name": "Carol Martinez",
+    "email": "carol@partner.com",
+    "groups": ["group-finance", "group-executive"]
+  },
+  {
+    "oid": "user4",
+    "name": "David Lee",
+    "email": "david@partner.com",
+    "groups": ["group-sales-south"]
+  },
+  {
+    "oid": "user5",
+    "name": "Emma Wilson",
+    "email": "emma@partner.com",
+    "groups": ["group-sales-east", "group-finance", "group-executive"]
+  }
+]

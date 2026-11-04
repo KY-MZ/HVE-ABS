@@ -1,0 +1,30 @@
+[
+  {
+    "accountId": "ACME001",
+    "allowedUsers": ["user1", "user5"],
+    "allowedGroups": ["group-sales-east", "group-finance"],
+    "deniedUsers": [],
+    "deniedGroups": []
+  },
+  {
+    "accountId": "TECH002",
+    "allowedUsers": ["user2"],
+    "allowedGroups": ["group-sales-west", "group-executive"],
+    "deniedUsers": [],
+    "deniedGroups": []
+  },
+  {
+    "accountId": "FINANCE003",
+    "allowedUsers": ["user3", "user5"],
+    "allowedGroups": ["group-finance", "group-executive"],
+    "deniedUsers": [],
+    "deniedGroups": []
+  },
+  {
+    "accountId": "RETAIL004",
+    "allowedUsers": ["user4"],
+    "allowedGroups": ["group-sales-south"],
+    "deniedUsers": [],
+    "deniedGroups": []
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "txn_20241001_001",
+    "accountId": "ACME001",
+    "amount": 250000,
+    "currency": "USD",
+    "category": "Services",
+    "date": "2024-10-01",
+    "description": "Q4 Service Fee",
+    "sourceUri": "transaction_txn_20241001_001"
+  },
+  {
+    "id": "txn_20240901_001",
+    "accountId": "ACME001",
+    "amount": 300000,
+    "currency": "USD",
+    "category": "Services",
+    "date": "2024-09-01",
+    "description": "Q3 Service Fee",
+    "sourceUri": "transaction_txn_20240901_001"
+  },
+  {
+    "id": "txn_20240801_001",
+    "accountId": "ACME001",
+    "amount": 280000,
+    "currency": "USD",
+    "category": "Services",
+    "date": "2024-08-01",
+    "description": "Q3 Service Fee",
+    "sourceUri": "transaction_txn_20240801_001"
+  },
+  {
+    "id": "txn_20241005_001",
+    "accountId": "TECH002",
+    "amount": 500000,
+    "currency": "USD",
+    "category": "Software License",
+    "date": "2024-10-05",
+    "description": "Annual Software License Renewal",
+    "sourceUri": "transaction_txn_20241005_001"
+  },
+  {
+    "id": "txn_20241008_001",
+    "accountId": "FINANCE003",
+    "amount": 750000,
+    "currency": "USD",
+    "category": "Consulting",
+    "date": "2024-10-08",
+    "description": "Strategic Financial Consulting",
+    "sourceUri": "transaction_txn_20241008_001"
+  },
+  {
+    "id": "txn_20240920_001",
+    "accountId": "RETAIL004",
+    "amount": 150000,
+    "currency": "USD",
+    "category": "Services",
+    "date": "2024-09-20",
+    "description": "Retail Support Services",
+    "sourceUri": "transaction_txn_20240920_001"
+  },
+  {
+    "id": "txn_20240820_001",
+    "accountId": "RETAIL004",
+    "amount": 200000,
+    "currency": "USD",
+    "category": "Services",
+    "date": "2024-08-20",
+    "description": "Retail Support Services",
+    "sourceUri": "transaction_txn_20240820_001"
+  }
+]

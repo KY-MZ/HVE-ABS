@@ -1,0 +1,52 @@
+[
+  {
+    "id": "doc_acme_q1_report",
+    "accountId": "ACME001",
+    "title": "ACME Q3 2024 Performance Report",
+    "content": "Q3 2024 showed revenue decline of 20% year-over-year. Manufacturing sector headwinds and budget cuts from major clients have impacted our engagement.",
+    "category": "financial_report",
+    "source": "document",
+    "sourceUri": "document_doc_acme_q1_report",
+    "createdAt": "2024-10-05"
+  },
+  {
+    "id": "doc_acme_risk_assessment",
+    "accountId": "ACME001",
+    "title": "Risk Assessment - ACME Account",
+    "content": "Account shows signs of potential churn risk. Contact frequency has decreased 35% in past quarter. Manufacturing industry facing economic headwinds.",
+    "category": "risk_analysis",
+    "source": "document",
+    "sourceUri": "document_doc_acme_risk_assessment",
+    "createdAt": "2024-10-20"
+  },
+  {
+    "id": "doc_tech_expansion_plan",
+    "accountId": "TECH002",
+    "title": "TechVision Growth Plan 2024-2025",
+    "content": "TechVision is planning significant expansion with 50% headcount increase. Strong venture funding secured. Expecting revenue growth of 150% in next 18 months.",
+    "category": "strategic_plan",
+    "source": "document",
+    "sourceUri": "document_doc_tech_expansion_plan",
+    "createdAt": "2024-10-01"
+  },
+  {
+    "id": "doc_finance_partnership",
+    "accountId": "FINANCE003",
+    "title": "FinanceHub Partnership Strategy",
+    "content": "Deep partnership with strategic value. Digital transformation engagement very successful. Client is expanding into Asian markets and seeking continued advisory support.",
+    "category": "strategic_plan",
+    "source": "document",
+    "sourceUri": "document_doc_finance_partnership",
+    "createdAt": "2024-09-15"
+  },
+  {
+    "id": "doc_retail_concerns",
+    "accountId": "RETAIL004",
+    "title": "RetailMax Account Status Review",
+    "content": "Account satisfaction declining. Service issues have impacted project timelines. Recommend immediate engagement and quality improvement focus.",
+    "category": "account_status",
+    "source": "document",
+    "sourceUri": "document_doc_retail_concerns",
+    "createdAt": "2024-10-15"
+  }
+]

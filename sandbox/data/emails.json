@@ -1,0 +1,52 @@
+[
+  {
+    "id": "email_20241001_001",
+    "accountId": "ACME001",
+    "from": "john@acmecorp.com",
+    "to": "salesrep@partner.com",
+    "subject": "Q4 Budget Review",
+    "body": "We are reviewing our Q4 budget and considering some optimization measures. Recent market conditions have impacted our spending priorities.",
+    "date": "2024-10-01",
+    "sourceUri": "email_email_20241001_001"
+  },
+  {
+    "id": "email_20240915_001",
+    "accountId": "ACME001",
+    "from": "sarah@partner.com",
+    "to": "john@acmecorp.com",
+    "subject": "Q3 Performance Summary",
+    "body": "Thank you for the Q3 engagement. We've observed a 20% decline in transaction volume compared to Q2, primarily due to budget constraints.",
+    "date": "2024-09-15",
+    "sourceUri": "email_email_20240915_001"
+  },
+  {
+    "id": "email_20241005_001",
+    "accountId": "TECH002",
+    "from": "cto@techvision.com",
+    "to": "account_mgr@partner.com",
+    "subject": "License Renewal and Expansion",
+    "body": "We're expanding our team by 50% next quarter and will need to increase our software licenses. Strong growth trajectory expected.",
+    "date": "2024-10-05",
+    "sourceUri": "email_email_20241005_001"
+  },
+  {
+    "id": "email_20241008_001",
+    "accountId": "FINANCE003",
+    "from": "cfo@financehub.com",
+    "to": "advisor@partner.com",
+    "subject": "Strategic Partnership Discussion",
+    "body": "Your consulting team has been instrumental in our digital transformation. Let's discuss expanding the engagement for our Asian expansion.",
+    "date": "2024-10-08",
+    "sourceUri": "email_email_20241008_001"
+  },
+  {
+    "id": "email_20240920_001",
+    "accountId": "RETAIL004",
+    "from": "ops@retailmax.com",
+    "to": "support@partner.com",
+    "subject": "Service Concerns",
+    "body": "We've experienced some issues with support responsiveness. Our recent projects have been delayed due to resource constraints on your end.",
+    "date": "2024-09-20",
+    "sourceUri": "email_email_20240920_001"
+  }
+]

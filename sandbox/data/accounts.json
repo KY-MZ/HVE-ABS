@@ -1,0 +1,46 @@
+[
+  {
+    "id": "ACME001",
+    "name": "ACME Corporation",
+    "industry": "Manufacturing",
+    "ownerGroupId": "group-sales-east",
+    "ownerId": "user1",
+    "createdAt": "2020-01-15",
+    "lastActivityAt": "2024-10-28",
+    "revenue": 5000000,
+    "status": "Active"
+  },
+  {
+    "id": "TECH002",
+    "name": "TechVision Inc",
+    "industry": "Software",
+    "ownerGroupId": "group-sales-west",
+    "ownerId": "user2",
+    "createdAt": "2021-06-20",
+    "lastActivityAt": "2024-11-02",
+    "revenue": 8000000,
+    "status": "Active"
+  },
+  {
+    "id": "FINANCE003",
+    "name": "FinanceHub LLC",
+    "industry": "Financial Services",
+    "ownerGroupId": "group-finance",
+    "ownerId": "user3",
+    "createdAt": "2019-03-10",
+    "lastActivityAt": "2024-10-15",
+    "revenue": 12000000,
+    "status": "Active"
+  },
+  {
+    "id": "RETAIL004",
+    "name": "RetailMax Ltd",
+    "industry": "Retail",
+    "ownerGroupId": "group-sales-south",
+    "ownerId": "user4",
+    "createdAt": "2022-02-05",
+    "lastActivityAt": "2024-09-20",
+    "revenue": 3000000,
+    "status": "At Risk"
+  }
+]
