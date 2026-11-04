@@ -1,6 +1,6 @@
 # Relationship Manager Intelligence Experience: 아키텍처 Step-by-Step 가이드
 
-> 상태: draft (개념 아키텍처, 배포 검증 전). `Ref.` 폴더의 기존 아키텍처(보안 관리자 + Declarative agent)는 참고용이며, 이 문서가 새 주제의 기준이다.
+> 상태: draft (개념 아키텍처, 배포 검증 전). `Ref` 폴더의 기존 아키텍처(보안 관리자 + Declarative agent)는 참고용이며, 이 문서가 새 주제의 기준이다.
 
 ## 1. 주제
 

@@ -42,7 +42,7 @@
 
 ## 5. 제약과 전제
 
-* M365 Copilot 채널: Declarative agent + API plugin (OpenAPI). 참고: `Ref.` 의 Decision-002 (Declarative 선택)와 같은 계열 결정을 재사용한다.
+* M365 Copilot 채널: Declarative agent + API plugin (OpenAPI). 참고: `Ref` 의 Decision-002 (Declarative 선택)와 같은 계열 결정을 재사용한다.
 * Copilot 응답 토큰 한도가 있으므로 API는 **요약 + 인용 링크**만 반환한다.
 * 고객 테넌트마다 Entra 앱 등록 및 관리자 동의가 필요하다.
 
