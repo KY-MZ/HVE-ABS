@@ -29,6 +29,7 @@
 | 08 | [Observability and Audit](08-Observability-and-Audit.md) | 로그 스키마, KQL, 불변 보존 | SE, 운영 |
 | 09 | [Review and ADR](09-Review-and-ADR.md) | WAF 리뷰, 위협 모델, ADR, 에스컬레이션 | Architect, Tech Lead |
 | 10 | [Roadmap and Tracking](10-Roadmap-and-Tracking.md) | 마일스톤, 이슈, 대시보드 연동 | PM, Tech Lead |
+| 11 | [Designer Workstream](11-Designer-Workstream.md) | 디자이너 담당 작업, 산출물, 마일스톤 | Designer, PM |
 
 ## 3. 설계 원칙
 
