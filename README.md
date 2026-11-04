@@ -12,6 +12,12 @@ Design Thinking은 실제 사용자의 니즈를 발견하고, 의미 있는 문
 > [!TIP]
 > 이 가이드와 저장소가 도움이 되었다면, GitHub에서 **이 저장소에 star(즐겨찾기)를 눌러주세요**! Star는 커뮤니티를 성장시키고 연결을 유지하며, 도구·에이전트·워크샵 자료에 대한 지속적인 업데이트를 제공하는 데 도움이 됩니다.
 
+## RM Intelligence Experience 아키텍처
+
+* 단계별 아키텍처 가이드: [docs/Step-by-Step/00-Overview.md](docs/Step-by-Step/00-Overview.md)
+* 구현 대시보드(Issue/Milestone 추적): [dashboard.html](dashboard.html), 데이터는 [dashboard-data.json](dashboard-data.json)
+* 백로그 생성: `scripts/create-github-backlog.sh [--dry-run]`
+
 ## HVE가 혁신을 가속화하는 방법
 
 HVE는 Hypervelocity Innovation 내부의 가속화 레이어입니다. 팀이 빠르게 움직이면서도 사람들이 사용할 수 있고, 조직이 운영할 수 있으며, 책임감 있게 게시하거나 수익화할 수 있는 솔루션을 구축하는 데 필요한 품질을 유지하도록 돕습니다.

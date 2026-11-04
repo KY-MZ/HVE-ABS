@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RM Intelligence 구현 대시보드</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1b1f24; --muted:#59636e; --ok:#1a7f37; --bar:#d0d7de; --accent:#0969da; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:20px 28px; background:#0b2a4a; color:#fff; }
+  header h1 { margin:0 0 4px; font-size:20px; }
+  header p { margin:0; font-size:13px; opacity:.85; }
+  main { max-width:1100px; margin:0 auto; padding:20px; }
+  .summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+  .stat, .ms { background:var(--card); border:1px solid #d8dee4; border-radius:8px; padding:14px; }
+  .stat b { display:block; font-size:26px; }
+  .stat span { color:var(--muted); font-size:12px; }
+  .ms { margin-bottom:14px; }
+  .ms h2 { margin:0; font-size:16px; display:flex; justify-content:space-between; gap:8px; }
+  .ms p { margin:4px 0 10px; color:var(--muted); font-size:13px; }
+  .bar { height:10px; background:var(--bar); border-radius:5px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:var(--ok); }
+  ul { list-style:none; padding:0; margin:12px 0 0; }
+  li { display:flex; gap:8px; align-items:baseline; padding:6px 0; border-top:1px solid #eaeef2; font-size:14px; }
+  .st { font-size:12px; padding:1px 8px; border-radius:10px; white-space:nowrap; }
+  .st.open { background:#ddf4ff; color:#0550ae; }
+  .st.closed { background:#dafbe1; color:var(--ok); }
+  .lb { font-size:11px; background:#eef1f4; color:var(--muted); padding:1px 6px; border-radius:8px; }
+  .toolbar { margin-bottom:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:13px; }
+  select, button { padding:4px 8px; }
+  a { color:var(--accent); text-decoration:none; }
+  .note { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Relationship Manager Intelligence Experience: 구현 대시보드</h1>
+  <p id="source">로딩 중...</p>
+</header>
+<main>
+  <div class="toolbar">
+    <label>라벨 필터
+      <select id="filter"><option value="">전체</option></select>
+    </label>
+    <button id="reload" type="button">새로고침</button>
+    <span class="note">GitHub API 를 먼저 조회하고, 실패하면 dashboard-data.json 을 표시합니다. 설계 문서는 docs/Step-by-Step/ 참고.</span>
+  </div>
+  <section class="summary" id="summary"></section>
+  <section id="milestones"></section>
+</main>
+<script>
+"use strict";
+const REPO = "hackathon-black-moth-3/hve-innovation-kr_megazone_2";
+const $ = (id) => document.getElementById(id);
+
+function el(tag, props = {}, children = []) {
+  const e = document.createElement(tag);
+  Object.assign(e, props);
+  for (const c of children) e.append(c);
+  return e;
+}
+
+async function fromGitHub() {
+  const base = `https://api.github.com/repos/${REPO}`;
+  const [msRes, isRes] = await Promise.all([
+    fetch(`${base}/milestones?state=all&per_page=100`),
+    fetch(`${base}/issues?state=all&per_page=100`),
+  ]);
+  if (!msRes.ok || !isRes.ok) throw new Error("GitHub API " + msRes.status);
+  const milestones = await msRes.json();
+  const issues = (await isRes.json()).filter((i) => !i.pull_request);
+  if (milestones.length === 0) throw new Error("no milestones");
+  return milestones.map((m) => ({
+    title: m.title,
+    description: m.description || "",
+    url: m.html_url,
+    issues: issues.filter((i) => i.milestone && i.milestone.number === m.number).map((i) => ({
+      title: i.title, state: i.state, url: i.html_url, labels: i.labels.map((l) => l.name),
+    })),
+  }));
+}
+
+async function fromLocal() {
+  const res = await fetch("dashboard-data.json");
+  if (!res.ok) throw new Error("dashboard-data.json " + res.status);
+  const d = await res.json();
+  return d.milestones.map((m) => ({
+    title: m.title,
+    description: m.description,
+    url: null,
+    issues: d.issues.filter((i) => i.milestone === m.id).map((i) => ({
+      title: i.title, state: i.state, url: null, labels: i.labels,
+    })),
+  }));
+}
+
+function render(data, source) {
+  $("source").textContent = "데이터 소스: " + source;
+  const label = $("filter").value;
+  const all = data.flatMap((m) => m.issues);
+  const done = all.filter((i) => i.state === "closed").length;
+  const pct = all.length ? Math.round((done / all.length) * 100) : 0;
+
+  const labels = [...new Set(all.flatMap((i) => i.labels))].sort();
+  const sel = $("filter");
+  if (sel.options.length === 1) labels.forEach((l) => sel.add(new Option(l, l)));
+
+  const stats = [["전체 이슈", all.length], ["완료", done], ["진행 중", all.length - done], ["진척률", pct + "%"]];
+  $("summary").replaceChildren(...stats.map(([k, v]) =>
+    el("div", { className: "stat" }, [el("b", { textContent: String(v) }), el("span", { textContent: k })])));
+
+  $("milestones").replaceChildren(...data.map((m) => {
+    const shown = label ? m.issues.filter((i) => i.labels.includes(label)) : m.issues;
+    const c = m.issues.filter((i) => i.state === "closed").length;
+    const p = m.issues.length ? Math.round((c / m.issues.length) * 100) : 0;
+    const title = m.url ? el("a", { href: m.url, textContent: m.title, target: "_blank", rel: "noopener" }) : m.title;
+    const bar = el("div", { className: "bar" }, [el("i", { style: `width:${p}%` })]);
+    const list = el("ul", {}, shown.map((i) => {
+      const t = i.url ? el("a", { href: i.url, textContent: i.title, target: "_blank", rel: "noopener" }) : i.title;
+      return el("li", {}, [
+        el("span", { className: "st " + i.state, textContent: i.state === "closed" ? "완료" : "진행" }),
+        el("span", {}, [t]),
+        ...i.labels.map((l) => el("span", { className: "lb", textContent: l })),
+      ]);
+    }));
+    return el("div", { className: "ms" }, [
+      el("h2", {}, [el("span", {}, [title]), el("span", { textContent: `${c}/${m.issues.length} (${p}%)` })]),
+      el("p", { textContent: m.description }),
+      bar, list,
+    ]);
+  }));
+}
+
+async function load() {
+  let data, source;
+  try { data = await fromGitHub(); source = "GitHub Issues / Milestones"; }
+  catch (e) {
+    try { data = await fromLocal(); source = "dashboard-data.json (GitHub 미연동 또는 백로그 미생성)"; }
+    catch (e2) { $("source").textContent = "데이터를 불러오지 못했습니다. 로컬 서버(python3 -m http.server)로 여세요."; return; }
+  }
+  render(data, source);
+  $("filter").onchange = () => render(data, source);
+}
+$("reload").onclick = load;
+load();
+</script>
+</body>
+</html>
